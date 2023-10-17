@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <math.h>
 #define DEC 10
 #define BIN 2
@@ -5,7 +6,7 @@
 #define HEX 16
 
 int extractdigit(double x, int d, int b);
-int extractFracPart(double f, int d, int b);
+double getlesserdigits(double x, int d, int b);
 int todecint(int x, int b);
 double todecimal(double x, int b);
 
@@ -19,18 +20,12 @@ int todecint(int x, int b) {
 }
 
 int extractdigit(double x, int d, int b) {
-  int digit;
-  if (d >= 0) {
-    digit = ((int)x % (int)(pow(b, d+1) + 1e-9) - (int)x % (int)(pow(b, d) + 1e-9));
-  } else {
-    digit = extractFracPart(x, d, b);
-  }
-  return digit;
+  double digit;
+  digit = (getlesserdigits(x,d+1,b) - getlesserdigits(x,d,b))/pow(b, d);
+  printf("(%f - %f)/(%f)\n", getlesserdigits(x,d+1,b), getlesserdigits(x,d,b), pow(b, d));
+  return (int)digit;
 }
 
-int extractFracPart(double f, int d, int b) {
-  int digit = f/pow((double)b,d);
-  digit -= (int)((int)f/pow((double)b,d));
-  digit -= (d < 0) ? extractFracPart(f,d+1,b)*b : 0;
-  return digit;
+double getlesserdigits(double x, int d, int b) {
+  return remainder(x, pow(b, d));
 }
